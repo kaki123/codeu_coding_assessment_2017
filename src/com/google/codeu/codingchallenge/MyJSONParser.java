@@ -19,8 +19,6 @@ import java.util.Scanner;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-//import java.util.regex.Matcher;
-//import java.util.regex.Pattern;
 
 final class MyJSONParser implements JSONParser {
 
@@ -53,8 +51,6 @@ final class MyJSONParser implements JSONParser {
 	  boolean o = m1.matches();
 	  boolean t = m2.matches();
 	  
-	  // get first { 
-	  //s.useDelimiter(",");
 	  
 	  if(o==true){	  	
 		   MatchResult result = m1;  	
