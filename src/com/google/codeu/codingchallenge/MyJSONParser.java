@@ -15,12 +15,63 @@
 package com.google.codeu.codingchallenge;
 
 import java.io.IOException;
+import java.util.Scanner;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+//import java.util.regex.Matcher;
+//import java.util.regex.Pattern;
 
 final class MyJSONParser implements JSONParser {
 
+	
+ public static void main(String args[]) throws IOException {
+	 MyJSONParser p = new MyJSONParser();
+	 //p.parse("{\"first\":\"sam\"}");
+	 p.parse("{ \"name\":{\"first\":\"sam\", \"last\":\"doe\" } }");
+	
+	 
+	 //{"key":"value"} - step 1 
+	 //{"key":"value" , "key1":"value1"}  - step 2
+	 //"key": { "key": "value"}  - step 3 
+	 // { }
+	 // { "name": "sam doe" }
+	 // { "name": { "first": "sam", "last": "doe" } }
+ }
   @Override
   public JSON parse(String in) throws IOException {
-    // TODO: implement this
-    return new MyJSON();
+	  MyJSON obj = new MyJSON();
+	  MyJSON obj2 = new MyJSON();
+	  // code ... while loop 
+	  Scanner s = new Scanner(in); //"{ \"name\":\"sam doe\" }"
+	  Pattern one = Pattern.compile("\\{\\s*\"([a-zA-Z\\s*]+)\"\\s*:\\s*\"([a-zA-Z\\s*]+)\"\\s*\\}");
+	  Pattern two = Pattern.compile("\\{\\s*\"([a-zA-Z\\s*]+)\"\\s*:\\s*\\{\\s*\"([a-zA-Z\\s*]+)\"\\s*:\\s*\"([a-zA-Z\\s*]+)\"\\s*,*\\s*\"([a-zA-Z\\s*]+)\"\\s*:\\s*\"([a-zA-Z\\s*]+)\"\\s*\\}\\s*\\}");
+	  								// ("{ \"name\":{\"first\":\"sam\", \"last\":\"doe\" } }")
+	  //Pattern pa = Pattern.compile("\\{\"([a-zA-Z\\s*]+)\"\\s*:\\s*\\{\"([a-zA-Z//s*]+)\"\\s*:\\s*\"([a-zA-Z\\s*]+)\"\\s*,\\s*\"([a-zA-Z\\s*]+)\"\\s*:\\s*\"([a-zA-Z\\s*]+)\"\\}\\}");
+	  Matcher m1 = one.matcher(in);
+	  Matcher m2 = two.matcher(in);
+	  boolean o = m1.matches();
+	  boolean t = m2.matches();
+	  
+	  // get first { 
+	  //s.useDelimiter(",");
+	  
+	  if(o==true){	  	
+		   MatchResult result = m1;  	
+		   for (int i=1; i<=result.groupCount(); i=i+2){
+			   obj.setString(result.group(i),result.group(i+1));
+		  }	 
+	   }
+	  if(t==true){
+	    	MatchResult result2 = m2;
+	    	JSON obj3 = new MyJSON();
+	        for (int i=2; i<=result2.groupCount(); i=i+2){        	
+	        	obj3.setString(result2.group(i),result2.group(i+1));            
+	        }
+	        obj2.setObject(result2.group(1), obj3 );
+	   }
+    return obj;
   }
 }
+
+

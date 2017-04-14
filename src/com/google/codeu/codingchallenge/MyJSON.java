@@ -15,40 +15,67 @@
 package com.google.codeu.codingchallenge;
 
 import java.util.Collection;
+import java.util.HashSet;
 
-final class MyJSON implements JSON {
+final class TestMain {
 
-  @Override
-  public JSON getObject(String name) {
-    // TODO: implement this
-    return null;
-  }
+  public static void main(String[] args) {
 
-  @Override
-  public JSON setObject(String name, JSON value) {
-    // TODO: implement this
-    return this;
-  }
+    final Tester tests = new Tester();
 
-  @Override
-  public String getString(String name) {
-    // TODO: implement this
-    return null;
-  }
+    tests.add("Empty Object", new Test() {
+      @Override
+      public void run(JSONFactory factory) throws Exception {
+        final JSONParser parser = factory.parser();
+        final JSON obj = parser.parse("{ }");
 
-  @Override
-  public JSON setString(String name, String value) {
-    // TODO: implement this
-    return this;
-  }
+        final Collection<String> strings = new HashSet<>();
+        obj.getStrings(strings);
 
-  @Override
-  public void getObjects(Collection<String> names) {
-    // TODO: implement this
-  }
+        Asserts.isEqual(strings.size(), 0);
 
-  @Override
-  public void getStrings(Collection<String> names) {
-    // TODO: implement this
+        final Collection<String> objects = new HashSet<>();
+        obj.getObjects(objects);
+
+        Asserts.isEqual(objects.size(), 0);
+      }
+    });
+
+    tests.add("String Value", new Test() {
+      @Override
+      public void run(JSONFactory factory) throws Exception {
+        final JSONParser parser = factory.parser();
+        final JSON obj = parser.parse("{ \"name\":\"sam doe\" }");
+
+        Asserts.isEqual("sam doe", obj.getString("name"));
+     }
+    });
+
+    tests.add("Object Value", new Test() {
+      @Override
+      public void run(JSONFactory factory) throws Exception {
+
+        final JSONParser parser = factory.parser();
+        final JSON obj = parser.parse("{ \"name\":{\"first\":\"sam\", \"last\":\"doe\" } }");
+
+        final JSON nameObj = obj.getObject("name");
+
+        Asserts.isNotNull(nameObj);
+        Asserts.isEqual("sam", nameObj.getString("first"));
+        Asserts.isEqual("doe", nameObj.getString("last"));
+      }
+    });
+
+    tests.run(new JSONFactory(){
+      @Override
+      public JSONParser parser() {
+        return new MyJSONParser();
+      }
+
+      @Override
+      public JSON object() {
+        return new MyJSON();
+      }
+    });
   }
 }
